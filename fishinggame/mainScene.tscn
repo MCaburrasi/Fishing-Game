@@ -24,7 +24,7 @@ script/source = "extends CharacterBody3D
 
 const WALK_SPEED = 5.0
 const SPRINT_SPEED = 8.0
-const JUMP_VELOCITY = 7
+const JUMP_VELOCITY = 5.5
 const SENSITIVITY = 0.003
 const BOB_FREQUENCY = 2.0
 const BOB_AMPLITUDE = 0.08
@@ -38,7 +38,7 @@ var speed = 0.0
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
 @onready var arm = $Arm
-@onready var rod = $Arm/FishingRod
+@onready var rod = $Arm/Hand/FishingRod
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -49,7 +49,7 @@ func _unhandled_input(event):
 		arm.rotate_y(-event.relative.x * SENSITIVITY)
 		camera.rotate_x(-event.relative.y * SENSITIVITY)
 		rod.rotate_x(-event.relative.y * SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-40), deg_to_rad(60))
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-70), deg_to_rad(60))
 		rod.rotation.x = clamp(camera.rotation.x, deg_to_rad(-45), deg_to_rad(-45))
 
 func _physics_process(delta: float) -> void:
@@ -60,7 +60,8 @@ func _physics_process(delta: float) -> void:
 	# Handle jump.
 	if Input.is_action_just_pressed(\"jump\") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-
+	
+	#Sprint
 	if Input.is_action_pressed(\"sprint\"):
 		speed = SPRINT_SPEED
 	else:
@@ -80,13 +81,20 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = lerp(velocity.x, direction.x * speed, delta * 2.0)
 		velocity.z = lerp(velocity.z, direction.z * speed, delta * 2.0)
+		
+	#Handle Headbob
 	t_bob += delta * velocity.length() * float(is_on_floor())
-	camera.transform.origin = _headbob(t_bob)
+	var bob = _headbob(t_bob)
+	camera.transform.origin = bob
+	rod.transform.origin = bob
 	
 	var velocity_clamped = clamp(velocity.length(), 0.5, SPRINT_SPEED * 2)
 	var target_fov = BASE_FOV + FOV_CHANGE * velocity_clamped
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 	
+	if true: #isEquiped
+		if Input.is_action_just_pressed(\"action\"):
+			
 	move_and_slide()
 	
 func _headbob(time) -> Vector3:
@@ -173,10 +181,14 @@ shape = SubResource("ConvexPolygonShape3D_88b43")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45767, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D/Head"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.227494, 0.000455141, 0.0653901)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.047439873, 0.00045514107, 0.0653901)
 
 [node name="Arm" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05994582, 1.2430786, 0)
 
-[node name="FishingRod" type="CSGMesh3D" parent="CharacterBody3D/Arm"]
-transform = Transform3D(0.242416, 0, 0, 0, 1.07968, 0.159039, 0, -1.07968, 0.159039, 0.445882, 1.19377, -0.440505)
+[node name="Hand" type="Node3D" parent="CharacterBody3D/Arm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5739097, -0.17146492, 0)
+
+[node name="FishingRod" type="CSGMesh3D" parent="CharacterBody3D/Arm/Hand"]
+transform = Transform3D(0.242416, 0, 0, 0, 0.8042842, 0.118472666, 0, -0.8042842, 0.118472666, 0.039623678, 0.14798892, -0.440505)
 mesh = SubResource("CapsuleMesh_iwpey")
