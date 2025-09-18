@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqlvvtrgvy250"]
+
+[sub_resource type="Theme" id="Theme_n2snw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n2snw"]
+
+[node name="HUD" type="CanvasLayer"]
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = -1
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 113.0
+offset_bottom = 346.0
+scale = Vector2(0.526031, 0.614173)
+
+[node name="Panel" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 88.0
+offset_bottom = 327.0
+theme = SubResource("Theme_n2snw")
+theme_override_styles/panel = SubResource("StyleBoxFlat_n2snw")
+
+[node name="Panel2" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 88.0
+offset_bottom = 327.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n2snw")
