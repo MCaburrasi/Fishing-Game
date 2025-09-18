@@ -1,2 +1,2 @@
 # Fishing Game
-My first game :3
+My first game!
