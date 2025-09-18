@@ -34,6 +34,8 @@ const FOV_CHANGE = 1.5
 
 var t_bob = 0.0
 var speed = 0.0
+var castingTime = 0.0
+var strength = 0.0
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
@@ -93,10 +95,23 @@ func _physics_process(delta: float) -> void:
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 	
 	if true: #isEquiped
-		if Input.is_action_just_pressed(\"action\"):
+		if Input.is_action_pressed(\"action\"):
+			castingTime += 0.5
+			strength = _calculateSrength(castingTime)
+			print(strength)
+		elif Input.is_action_just_released(\"action\"):
+			print(castingTime)
+			strength = _calculateSrength(castingTime)
+			print(strength)
+			castingTime = 0.0
 			
 	move_and_slide()
 	
+func _calculateSrength(castingTime) -> float:
+	var strength = 0.0
+	strength = (sin(castingTime) * 0.5 + 0.5) * 100
+	return strength
+
 func _headbob(time) -> Vector3:
 	var pos = Vector3.ZERO
 	pos.y = sin(time + BOB_FREQUENCY) * BOB_AMPLITUDE
@@ -181,14 +196,14 @@ shape = SubResource("ConvexPolygonShape3D_88b43")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45767, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D/Head"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.047439873, 0.00045514107, 0.0653901)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 5.97491, -0.0474399, 0.000455141, 0.0653901)
 
 [node name="Arm" type="Node3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05994582, 1.2430786, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0599458, 1.24308, 0)
 
 [node name="Hand" type="Node3D" parent="CharacterBody3D/Arm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5739097, -0.17146492, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57391, -0.171465, 0)
 
 [node name="FishingRod" type="CSGMesh3D" parent="CharacterBody3D/Arm/Hand"]
-transform = Transform3D(0.242416, 0, 0, 0, 0.8042842, 0.118472666, 0, -0.8042842, 0.118472666, 0.039623678, 0.14798892, -0.440505)
+transform = Transform3D(0.242416, 0, 0, 0, 0.804284, 0.118473, 0, -0.804284, 0.118473, 0.0396237, 0.147989, -0.440505)
 mesh = SubResource("CapsuleMesh_iwpey")
